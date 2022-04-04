@@ -37,7 +37,7 @@
     <button id="multiply">x</button>
   </div>
   <script>
-    // 연달아 계산하기
+    // 연달아 계산하기, -1 + 2를 가능케, =버튼 말고 다른 연산자(+, - 등)으로 연달아 계산할 수 있게하기
     let numOne = '';
     let operator = '';
     let numTwo = '';
@@ -98,6 +98,10 @@
           default:
             break;
         }
+        $operator.value = '';
+        numOne = $result.value;
+        operator = '';
+        numTwo = '';
       } else {
         alert('숫자를 먼저 입력하세요.');
       }
