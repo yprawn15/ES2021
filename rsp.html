@@ -1,0 +1,101 @@
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>가위바위보</title>
+  <style>
+    #computer {
+      width: 142px;
+      height: 200px;
+    }
+  </style>
+</head>
+
+<body>
+<div id="computer"></div>
+<div>
+  <button id="scissors" class="btn">가위</button>
+  <button id="rock" class="btn">바위</button>
+  <button id="paper" class="btn">보</button>
+</div>
+<div id="score">0</div>
+<script>
+  // 배운거 : setInterval, clearInterval, clearTimeOut, removeEventListener(주의점 있음)
+  const $computer = document.querySelector('#computer');
+  const $score = document.querySelector('#score');
+  const $rock = document.querySelector('#rock');
+  const $scissors = document.querySelector('#scissors');
+  const $paper = document.querySelector('#paper');
+  const IMG_URL = './rsp.png'; // ./ 현재 이 파일이 위치한 곳의 이미지 불러오기 .././하면 자손 이런식으로 불러오기 가능
+  $computer.style.background = `url(${IMG_URL}) -464px 0`; // 이미지의 가로 폭 조정
+  $computer.style.backgroundSize = 'auto 200px';
+
+  const rspX = {
+    scissors: '0', // 가위
+    rock: '-220px', // 바위
+    paper: '-440px', // 보
+  };
+
+  let computerChoice = 'scissors';
+  const changeComputerHand = () => {
+    if (computerChoice === 'scissors') { // 가위면
+      computerChoice = 'rock';
+    } else if (computerChoice === 'rock') { // 바위면
+      computerChoice = 'paper';
+    } else if (computerChoice === 'paper') { // 보면
+      computerChoice = 'scissors';
+    }
+    $computer.style.background = `url(${IMG_URL}) ${rspX[computerChoice]} 0`; // 주의 ! rspX[value] 여기서 rspX.value를 하면 객체 안에 value라는 key 값이 없기 때문에 오작동 한다.
+    $computer.style.backgroundSize = 'auto 200px';    
+  }
+  let intervalId = setInterval(changeComputerHand, 50);
+
+  const scoreTable = {
+    rock: 0,
+    scissors: 1,
+    paper: -1,
+  };
+
+  // clickButton 5번 호출, 인터벌 1번, 2번, 3번, 4번, 5번(얘만 intervalId)
+  // 그 다음에 버튼을 클릭하면 5번만 취소
+  let clickable = true;
+  let score = 0;
+  const clickButton = () => {
+    if (clickable) {
+      clearInterval(intervalId);
+      clickable = false;
+      // 점수 계산 및 화면 표시
+      const myChoice = event.target.textContent === '바위' 
+        ? 'rock' 
+        : event.target.textContent === '가위' 
+          ? 'scissors' 
+          : 'paper';
+      const myScore = scoreTable[myChoice];
+      const computerScore = scoreTable[computerChoice];
+      const diff = myScore - computerScore;
+      // diff === '고양이' || diff === '사자' || diff === '강아지'
+      // ['고양이', '사자', '강아지'].includes(diff) 이렇게 고쳐 쓰면 깔끔
+      let message;
+      if ([2, -1].includes(diff)) { // 승리조건, 점수표 참고
+        score += 1;
+        message = '승리';
+      } else if ([-2, 1].includes(diff)) { // 패배조건
+        score -= 1;
+        message = '패배';
+      } else {
+        message = '무승부';
+      }
+      $score.textContent = `${message} 총: ${score}점`;
+      setTimeout(() => {
+        clickable = true;
+        intervalId = setInterval(changeComputerHand, 50);
+      }, 1000);
+    }
+  };
+
+
+  $rock.addEventListener('click', clickButton);
+  $scissors.addEventListener('click', clickButton);
+  $paper.addEventListener('click', clickButton);
+</script>
+</body>
+</html>
